@@ -11,6 +11,9 @@ student_manager
 students_out.txt
 check.txt
 
+# Slide generator dependencies
+lectures/slides/node_modules/
+
 # Editor and code navigation files
 .vscode/
 .idea/

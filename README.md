@@ -1,6 +1,6 @@
 # C Programming — Linked Lists: Student Materials
 
-Weekly PowerPoint slides, C examples, and assignment starters for the eight-week course.
+Weekly lecture notes, PowerPoint slides, reference PDFs, C examples, and assignment starters for the eight-week course.
 Build a **Student Management System** using an **intrusive circular doubly linked list**.
 
 ## Weekly Materials
@@ -18,13 +18,24 @@ Build a **Student Management System** using an **intrusive circular doubly linke
 
 Weeks 03 and 04 each include assignments A and B. Read the assignment's `README.md` first, then complete the TODOs in its `starter/` directory.
 
+## Lecture Notes and Reference PDFs
+
+The [lecture guide](lectures/README.md) links each week's notes, examples, and assignments.
+Seven reference PDFs from **C Programming Part 2** are placed beside the relevant weekly decks;
+the [reading map](lectures/README.md#reference-pdf-placement) lists their locations and selected pages for each week.
+Each week's example guide maps runnable C demos to those PDF pages and includes short exercises.
+
 ## Getting Started
 
 You need a C11 compiler (`gcc` or Clang) and `make`.
 
 ```bash
-git clone https://github.com/seehwan/kernel-style-linked-list-course-students.git
-cd kernel-style-linked-list-course-students
+git clone https://github.com/seehwan/2026-swcoding.git
+cd 2026-swcoding
+
+# Build or run every week's lecture examples with prepared input.
+make -C lectures
+make -C lectures run
 
 # Build and run a lecture example.
 make -C lectures/week01-struct/examples
@@ -35,7 +46,7 @@ make -C assignments/week01-struct/starter
 ./assignments/week01-struct/starter/week01
 
 # Remove compiled files.
-make -C lectures/week01-struct/examples clean
+make -C lectures clean
 make -C assignments/week01-struct/starter clean
 ```
 
@@ -61,3 +72,5 @@ make -C lectures/week07-file-io/examples test
 ```
 
 The [final project assignment](assignments/week08-final-project/README.md) contains the complete requirements and submission checklist.
+See also the [project overview](docs/project_overview.md), [grading criteria](docs/grading.md),
+and [submission guide](docs/submission.md).

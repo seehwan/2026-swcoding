@@ -7,12 +7,30 @@ pointer_basics
 struct_pointer
 warnings
 hello
+pass_by_value
+array_arithmetic
+void_pointer
+pointer_declarations
+matrix_arguments
+function_callbacks
+complex_declarations
+struct_values
+nested_catalog
+dynamic_struct_copy
+union_storage
+enum_status
+tagged_union
 # week02
 pointer_exprs
 arith_logic
 bit_flags
 macro_parens
 precedence_traps
+packed_book_flags
+string_capacity
+string_scan_argv
+string_search
+string_storage
 # week03
 memory_map
 malloc_basics
@@ -20,18 +38,25 @@ book_factory
 dangling_local
 sll_manual
 sll_book
+dynamic_matrix
+owned_title
+realloc_catalog
 # week04
 dll_book
 clist_book
+invariant_modes
 # week05
 first_member
 intrusive_book
 multi_list
+borrowed_catalog
 # week06
 layout
 pointer_arith
 container_of_demo
 list_macros
+byte_representation
+bitfield_layout
 # week07
 stdio_streams
 count_chars
@@ -42,6 +67,11 @@ saved.txt
 saved2.txt
 out.txt
 err.txt
+stream_copy
+binary_position
+line_parse
 # week08
 stats_demo
 broken
+preprocessor_demo
+book_demo
