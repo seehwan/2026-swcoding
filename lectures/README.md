@@ -26,8 +26,6 @@ Each session follows the same order:
 
 Week 01 spends more of its time on the toolchain and the Makefile. Week 08 adds a part on multi-file builds and runs the lab as a project kickoff.
 
-The slide decks are generated from [`slides/`](slides/); see its README to rebuild them after editing.
-
 ## Reference PDF Placement
 
 The seven reference PDFs from **C Programming Part 2** are stored beside the

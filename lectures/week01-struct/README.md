@@ -88,7 +88,6 @@ assignments/weekNN-<topic>/starter/         where you write code (assignment_NN.
 lectures/weekNN-<topic>/README.md           these lecture notes
 lectures/weekNN-<topic>/weekNN-slides.pptx  the slides
 lectures/weekNN-<topic>/examples/           the code shown in class
-lectures/slides/                            the sources the slides are generated from
 docs/                                       project overview, grading, and submission rules
 ```
 
