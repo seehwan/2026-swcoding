@@ -366,6 +366,8 @@ The output shows trap 6 printing `average = 3.00`. `-Wall -Wextra` catches most 
 
 Task: [assignments/week02-operators/README.md](../../assignments/week02-operators/README.md)
 
+**Part A** (`assignment_02a.c`):
+
 1. Build the starter **first** and read its three warnings. They are deliberate.
 2. `is_valid_score()`: test it with -1, 0, 100, and 101.
 3. `is_passing()`: one `&&` expression that checks `NULL` first. Test it with `&student` and `NULL`.
@@ -373,6 +375,12 @@ Task: [assignments/week02-operators/README.md](../../assignments/week02-operator
 5. Flags: set `STUDENT_ENROLLED` and `STUDENT_PAID`, clear `STUDENT_PAID`, and print them with `print_flags()`.
 6. `fix_me()`: fix all five bugs, including the two that produce **no** warning, and explain each one in a comment.
 7. Rebuild until there are **zero warnings**.
+
+**Part B** (`assignment_02b.c`): predict, then check.
+
+1. Work out each `CHECK` line on paper and replace its `TODO` with your prediction.
+2. Build and run. For every `MISS`, add a comment that explains what you got wrong.
+3. Answer the written questions W1–W3 at the end of the file.
 
 **Stretch goals:**
 
