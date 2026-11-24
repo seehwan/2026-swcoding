@@ -1,7 +1,7 @@
 # Executables and generated files produced by the lecture examples
 *.i
 
-# week01
+# session 1
 struct_basics
 pointer_basics
 struct_pointer
@@ -20,7 +20,7 @@ dynamic_struct_copy
 union_storage
 enum_status
 tagged_union
-# week02
+# session 2
 pointer_exprs
 arith_logic
 bit_flags
@@ -31,7 +31,7 @@ string_capacity
 string_scan_argv
 string_search
 string_storage
-# week03
+# session 3
 memory_map
 malloc_basics
 book_factory
@@ -41,23 +41,23 @@ sll_book
 dynamic_matrix
 owned_title
 realloc_catalog
-# week04
+# session 3 part 2, extra A
 dll_book
 clist_book
 invariant_modes
-# week05
+# extra B
 first_member
 intrusive_book
 multi_list
 borrowed_catalog
-# week06
+# extra C
 layout
 pointer_arith
 container_of_demo
 list_macros
 byte_representation
 bitfield_layout
-# week07
+# session 4: file-io
 stdio_streams
 count_chars
 library_io
@@ -70,7 +70,7 @@ err.txt
 stream_copy
 binary_position
 line_parse
-# week08
+# session 4: multi-file
 stats_demo
 broken
 preprocessor_demo

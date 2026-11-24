@@ -5,9 +5,10 @@
 *.out
 a.out
 student_manager
-/assignments/**/starter/week[0-9][0-9]*
+/assignments/**/starter/session[0-9]*
+/assignments/**/starter/extra_[a-d]
 
-# Files written by the Week 07 assignment
+# Files written by the optional file I/O assignment
 students_out.txt
 check.txt
 
