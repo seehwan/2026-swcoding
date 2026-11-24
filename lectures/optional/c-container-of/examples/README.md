@@ -26,10 +26,10 @@ make -C lectures/optional/c-container-of/examples clean
 | 6 | [bitfield_layout.c](bitfield_layout.c) | Low Level Operations 20-21 | Print sizes and offsets of ordinary members beside unsigned bit-fields. Edition 15 fits in four bits, 16 is rejected, and 15 remains stored. Why can `year` have an address while `edition` cannot? |
 
 Reference PDFs are stored once and linked here:
-[Pointers Revisited](../../../session1-struct/%5BSlide%5D%2001.%20Pointers%20Revisited.pdf),
-[Low Level Operations](../../../session2-operators/%5BSlide%5D%2006.%20Low%20Level%20Operations.pdf),
-[Strings](../../../session2-operators/%5BSlide%5D%2003.%20Strings.pdf), and
-[Writing Large Programs](../../../session4-file-io-project/%5BSlide%5D%2007.%20Writing%20Large%20Programs.pdf).
+[Pointers Revisited](../../../week01-struct/%5BSlide%5D%2001.%20Pointers%20Revisited.pdf),
+[Low Level Operations](../../../week02-operators/%5BSlide%5D%2006.%20Low%20Level%20Operations.pdf),
+[Strings](../../../week02-operators/%5BSlide%5D%2003.%20Strings.pdf), and
+[Writing Large Programs](../../../week04-file-io-project/%5BSlide%5D%2007.%20Writing%20Large%20Programs.pdf).
 All page numbers are one-based PDF pages, matching the printed slide numbers.
 
 ## Points to make explicit
@@ -47,7 +47,7 @@ All page numbers are one-based PDF pages, matching the printed slide numbers.
   members in the same struct still have offsets. Do not use `container_of`
   with a bit-field, or serialize a raw bit-field struct as a file/wire format.
 - These C struct bit-fields differ from the explicit integer masks in
-  [packed_book_flags.c](../../../session2-operators/examples/packed_book_flags.c).
+  [packed_book_flags.c](../../../week02-operators/examples/packed_book_flags.c).
 
 For a strict rebuild:
 

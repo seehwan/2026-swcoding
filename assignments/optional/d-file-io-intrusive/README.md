@@ -1,6 +1,6 @@
 # Extra D — File I/O with an Intrusive List
 
-> **Optional.** This assignment is not required and is not part of the grade. It builds on the intrusive list of Extras B and C. The [final project](../../session4-final-project/) requires the same loading and saving, in the same file format, with a `struct node` list.
+> **Optional.** This assignment is not required and is not part of the grade. It builds on the intrusive list of Extras B and C. The [final project](../../week04-final-project/) requires the same loading and saving, in the same file format, with a `struct node` list.
 
 ## Learning Objectives
 

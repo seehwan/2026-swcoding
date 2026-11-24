@@ -13,9 +13,9 @@ All programs use fixed input and run without interaction.
 ## Teaching sequence and reference pages
 
 The intrusive algorithms are course extensions. Their C prerequisites come
-from [Structures, Unions and Enums](../../../session1-struct/%5BSlide%5D%2005.%20Structures%2C%20Unions%20and%20Enums.pdf),
-[Pointers Revisited](../../../session1-struct/%5BSlide%5D%2001.%20Pointers%20Revisited.pdf),
-and [Dynamic Memory Allocation](../../../session3-linked-list/%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf).
+from [Structures, Unions and Enums](../../../week01-struct/%5BSlide%5D%2005.%20Structures%2C%20Unions%20and%20Enums.pdf),
+[Pointers Revisited](../../../week01-struct/%5BSlide%5D%2001.%20Pointers%20Revisited.pdf),
+and [Dynamic Memory Allocation](../../../week03-linked-list/%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf).
 
 | Order | Demo | PDF pages and purpose |
 |---|---|---|

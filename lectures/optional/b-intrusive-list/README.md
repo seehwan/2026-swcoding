@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | **Optional reading.** Not part of the four sessions, and not on the exam. |
+| **Status** | **Optional reading.** Not part of the four weeks, and not on the exam. |
 | **Assignment** | [Extra B — Intrusive Linked List](../../../assignments/optional/b-intrusive-list/) |
 | **Demo code** | [`examples/`](examples/) · [Teaching guide](examples/README.md) |
 | **Previous / Next** | [Extra A](../a-circular-list/) · [Extra C](../c-container-of/) |
@@ -16,15 +16,15 @@ casts, multiple memberships, and ownership. The seven reference PDFs supply
 background rather than an intrusive-list implementation. After reviewing the
 Extra A circular-list invariants, select a short refresher as needed:
 
-- [Structures, Unions and Enums](../../session1-struct/%5BSlide%5D%2005.%20Structures%2C%20Unions%20and%20Enums.pdf#page=24),
+- [Structures, Unions and Enums](../../week01-struct/%5BSlide%5D%2005.%20Structures%2C%20Unions%20and%20Enums.pdf#page=24),
   pp. 24-27: nesting a structure inside another structure and accessing its
   members. Compare a node containing a book with a book containing links.
-- [Dynamic Memory Allocation](../../session3-linked-list/%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf#page=25),
+- [Dynamic Memory Allocation](../../week03-linked-list/%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf#page=25),
   pp. 25-27: leaks and dangling pointers. Use this review when explaining why
   every list membership must be removed before the owning code frees a book.
-- Optional: [Pointers Revisited](../../session1-struct/%5BSlide%5D%2001.%20Pointers%20Revisited.pdf#page=17),
+- Optional: [Pointers Revisited](../../week01-struct/%5BSlide%5D%2001.%20Pointers%20Revisited.pdf#page=17),
   pp. 17-19, for generic object pointers; use the corrected
-  [`void_pointer.c`](../../session1-struct/examples/pointers-revisited/void_pointer.c)
+  [`void_pointer.c`](../../week01-struct/examples/pointers-revisited/void_pointer.c)
   alongside the slides. A `void *` does not remember the payload's type or
   locate its enclosing object. Defer the general recovery calculation to Extra C.
 

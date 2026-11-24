@@ -13,12 +13,12 @@ remains a separate assert-failure demonstration and is not part of that target.
 
 ## Teaching sequence and reference pages
 
-The doubly linked list that comes before these demos, `dll_book.c`, is in the [Session 3 examples](../../../session3-linked-list/examples/dll_book.c).
+The doubly linked list that comes before these demos, `dll_book.c`, is in the [Week 03 examples](../../../week03-linked-list/examples/dll_book.c).
 
 | Order | Demo | Connection to the reference PDFs |
 |---|---|---|
-| 1 | [clist_book.c](clist_book.c) | Add a sentinel and circular invariants; revisit [Dynamic Memory Allocation](../../../session3-linked-list/%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf), pp. 25-27, before saving the next link and freeing each node. These list algorithms extend the PDF's pointer and lifetime mechanisms. |
-| 2 | [invariant_modes.c](invariant_modes.c) | [Writing Large Programs](../../../session4-file-io-project/%5BSlide%5D%2007.%20Writing%20Large%20Programs.pdf), pp. 16-18, supplies conditional compilation and `-D`; the course's `assert` extension shows which checks disappear under `NDEBUG` and which runtime checks must remain. |
+| 1 | [clist_book.c](clist_book.c) | Add a sentinel and circular invariants; revisit [Dynamic Memory Allocation](../../../week03-linked-list/%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf), pp. 25-27, before saving the next link and freeing each node. These list algorithms extend the PDF's pointer and lifetime mechanisms. |
+| 2 | [invariant_modes.c](invariant_modes.c) | [Writing Large Programs](../../../week04-file-io-project/%5BSlide%5D%2007.%20Writing%20Large%20Programs.pdf), pp. 16-18, supplies conditional compilation and `-D`; the course's `assert` extension shows which checks disappear under `NDEBUG` and which runtime checks must remain. |
 
 The new mode demo uses a small ring of live stack objects to isolate the build
 question. It does not replace the insertion, traversal, and cleanup examples.

@@ -2,22 +2,22 @@
 
 | | |
 |---|---|
-| **Status** | **Optional reading.** Not part of the four sessions, and not on the exam. |
+| **Status** | **Optional reading.** Not part of the four weeks, and not on the exam. |
 | **Assignment** | [Extra A — Circular Doubly Linked List](../../../assignments/optional/a-circular-list/) |
 | **Demo code** | [`examples/`](examples/) · [Teaching guide](examples/README.md) |
-| **Previous / Next** | [Session 3, Part 2](../../session3-linked-list/part2-doubly-linked-list.md) · [Extra B](../b-intrusive-list/) |
+| **Previous / Next** | [Week 03, Part 2](../../week03-linked-list/part2-doubly-linked-list.md) · [Extra B](../b-intrusive-list/) |
 
-These notes continue [Session 3, Part 2](../../session3-linked-list/part2-doubly-linked-list.md), and their section numbers continue from it: Part 2 has §1 and §2, and these notes have §3 and §4. A reference such as "§2.2" below points back into Part 2.
+These notes continue [Week 03, Part 2](../../week03-linked-list/part2-doubly-linked-list.md), and their section numbers continue from it: Part 2 has §1 and §2, and these notes have §3 and §4. A reference such as "§2.2" below points back into Part 2.
 
 Part 2 ended with four `NULL` checks spread over insert and delete. Here a sentinel node and circular links make every one of them disappear.
 
 ## Reference slide reading
 
-The sentinel and circular-list slides are in the [Session 3 Part 2 deck](../../session3-linked-list/session3-part2-slides.pptx). Two reference PDFs review prerequisites:
+The slides are in [extra-a-slides.pptx](extra-a-slides.pptx). Two reference PDFs review prerequisites:
 
-- [Dynamic Memory Allocation](../../session3-linked-list/%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf#page=25),
+- [Dynamic Memory Allocation](../../week03-linked-list/%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf#page=25),
   pp. 25-27: leaks and dangling pointers, before saving the next link and freeing each node.
-- [Writing Large Programs](../../session4-file-io-project/%5BSlide%5D%2007.%20Writing%20Large%20Programs.pdf#page=16),
+- [Writing Large Programs](../../week04-file-io-project/%5BSlide%5D%2007.%20Writing%20Large%20Programs.pdf#page=16),
   pp. 16-18: conditional compilation and `-D`; connect these to the
   `assert()` / `-DNDEBUG` demonstration in §4.7, which the reference does not cover.
 
@@ -148,7 +148,7 @@ static void list_init(struct node *head)
 }
 ```
 
-Why must `init` run before anything else? What happens if you traverse an uninitialized `struct node head;`? (Recall Session 1: an uninitialized local holds garbage.)
+Why must `init` run before anything else? What happens if you traverse an uninitialized `struct node head;`? (Recall Week 01: an uninitialized local holds garbage.)
 
 ---
 
@@ -213,7 +213,7 @@ after the first insert:
   [2]  prev = 0x16f0ca510    self = 0x101335240    next = 0x16f0ca510
 ```
 
-Both of HEAD's links point to `[2]`, and both of `[2]`'s links point to HEAD. Notice that HEAD's address looks very different from the others: the sentinel is on the **stack** and the nodes are on the **heap** (Session 3).
+Both of HEAD's links point to `[2]`, and both of `[2]`'s links point to HEAD. Notice that HEAD's address looks very different from the others: the sentinel is on the **stack** and the nodes are on the **heap** (Week 03).
 
 ### 4.3 Unlink: two assignments, no `if`
 
@@ -243,7 +243,7 @@ This is the general case from §2.1 with the `if`s deleted. Because every node h
 
 Trace it on the **one-element** list. Afterwards, `head.next == &head` and `head.prev == &head`, so the list is empty again, automatically.
 
-| | `NULL`-terminated (Session 3, Part 2) | Circular + sentinel (these notes) |
+| | `NULL`-terminated (Week 03, Part 2) | Circular + sentinel (these notes) |
 |---|---|---|
 | Insert front | 1 `if` | 0 |
 | Insert back | 1 `if` | 0 |
@@ -271,7 +271,7 @@ for (pos = head->next; pos != head; pos = pos->next)
     free(pos);                                     /* WRONG */
 ```
 
-Save the next node first, as in Session 3:
+Save the next node first, as in Week 03:
 
 ```c
 static void free_all(struct node *head)
@@ -336,7 +336,7 @@ make -B CFLAGS="-Wall -Wextra -std=c11 -DNDEBUG"
 make -B                 # back to the normal build
 ```
 
-Note the `-B`: as Session 3 showed, `make` does not notice a change of flags. Two consequences:
+Note the `-B`: as Week 03 showed, `make` does not notice a change of flags. Two consequences:
 
 - Never put code with **side effects** inside `assert()` (e.g. `assert(n = malloc(...))`). It vanishes with `-DNDEBUG`.
 - `assert()` is for **programming errors** (broken invariants), not for user errors like a bad ID. Handle user errors with `if` and a message.

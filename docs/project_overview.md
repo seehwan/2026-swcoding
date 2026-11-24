@@ -6,14 +6,14 @@ The goal of this project is not to memorize a linked list API. It is to understa
 
 ## Schedule
 
-The course runs in four sessions and ends with an exam.
+The course runs in four weeks and ends with an exam.
 
-| Session | Week of | Topic | Key Concepts | Materials |
+| Week | Week of | Topic | Key Concepts | Materials |
 |---|---|---|---|---|
-| 1 | — | Build tools and struct | `gcc`, `make`, `struct`, pointer | [Session 1](../lectures/session1-struct/) |
-| 2 | Nov 23 | Operators and precedence | precedence, short-circuit, bit flags, strings | [Session 2](../lectures/session2-operators/) |
-| 3 | Nov 30 | Dynamic memory and linked lists | `malloc()`, `free()`, `next`, `prev`, `head`, `tail`, traversal | [Session 3](../lectures/session3-linked-list/), Parts 1 and 2 |
-| 4 | Dec 7 | File I/O and multi-file programs | `fopen()`, `fgets()`, `sscanf()`, headers, separate compilation | [Session 4](../lectures/session4-file-io-project/), Parts 1 and 2 |
+| 1 | — | Build tools and struct | `gcc`, `make`, `struct`, pointer | [Week 01](../lectures/week01-struct/) |
+| 2 | Nov 23 | Operators and precedence | precedence, short-circuit, bit flags, strings | [Week 02](../lectures/week02-operators/) |
+| 3 | Nov 30 | Dynamic memory and linked lists | `malloc()`, `free()`, `next`, `prev`, `head`, `tail`, traversal | [Week 03](../lectures/week03-linked-list/), Parts 1 and 2 |
+| 4 | Dec 7 | File I/O and multi-file programs | `fopen()`, `fgets()`, `sscanf()`, headers, separate compilation | [Week 04](../lectures/week04-file-io-project/), Parts 1 and 2 |
 | — | Dec 14 | **Exam**; final project due | | |
 
 The circular list with a sentinel (Extra A), the intrusive list (Extra B), and `container_of()` (Extra C) are **[optional reading](../lectures/optional/)**. They are the next step after this course, and the final project lists them as a bonus extension.
@@ -53,9 +53,9 @@ every node n:    if n->next != NULL, then n->next->prev == n
 
 | Topic | In the final project |
 |---|---|
-| Struct and pointers (Session 1) | `struct student`, `struct node`, `list->head`, `n->data.id` |
-| Operators (Session 2) | `n != NULL && n->data.id == id`, input validation, `&n->data` |
-| Dynamic memory (Session 3, Part 1) | one `malloc()` per node, one `free()` per node |
-| Linked lists (Session 3, Parts 1 and 2) | add at the tail, delete in four cases, forward and backward traversal |
-| File I/O (Session 4, Part 1) | `student_load()` and `student_save()` |
-| Multi-file programs (Session 4, Part 2) | `main.c`, `student.h`, `student.c`, and the Makefile |
+| Struct and pointers (Week 01) | `struct student`, `struct node`, `list->head`, `n->data.id` |
+| Operators (Week 02) | `n != NULL && n->data.id == id`, input validation, `&n->data` |
+| Dynamic memory (Week 03, Part 1) | one `malloc()` per node, one `free()` per node |
+| Linked lists (Week 03, Parts 1 and 2) | add at the tail, delete in four cases, forward and backward traversal |
+| File I/O (Week 04, Part 1) | `student_load()` and `student_save()` |
+| Multi-file programs (Week 04, Part 2) | `main.c`, `student.h`, `student.c`, and the Makefile |

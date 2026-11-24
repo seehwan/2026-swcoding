@@ -1,10 +1,10 @@
-# Build, run, or clean every session's lecture examples from one place.
+# Build, run, or clean every week's lecture examples from one place.
 # Command-line overrides, such as CFLAGS=..., pass through to recursive make.
 
-EXAMPLE_DIRS = session1-struct/examples \
-               session2-operators/examples \
-               session3-linked-list/examples \
-               session4-file-io-project/examples \
+EXAMPLE_DIRS = week01-struct/examples \
+               week02-operators/examples \
+               week03-linked-list/examples \
+               week04-file-io-project/examples \
                optional/a-circular-list/examples \
                optional/b-intrusive-list/examples \
                optional/c-container-of/examples

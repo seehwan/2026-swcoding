@@ -1,6 +1,6 @@
 # Extra A — Circular Doubly Linked List
 
-> **Optional.** This assignment is not required and is not part of the grade. It goes with the [Extra A notes](../../../lectures/optional/a-circular-list/), and it continues [assignment 03C](../../session3-linked-list/): it keeps the two links of 03C and replaces every `NULL` end with a sentinel.
+> **Optional.** This assignment is not required and is not part of the grade. It goes with the [Extra A notes](../../../lectures/optional/a-circular-list/), and it continues [assignment 03C](../../week03-linked-list/): it keeps the two links of 03C and replaces every `NULL` end with a sentinel.
 
 ## Learning Objectives
 

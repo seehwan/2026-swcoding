@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| **Status** | **Optional reading.** Not part of the four sessions, and not on the exam. |
+| **Status** | **Optional reading.** Not part of the four weeks, and not on the exam. |
 | **Assignment** | [Extra C — `container_of()`](../../../assignments/optional/c-container-of/) |
 | **Demo code** | [`examples/`](examples/) |
-| **Previous / Next** | [Extra B](../b-intrusive-list/) · [Final project](../../../assignments/session4-final-project/) |
+| **Previous / Next** | [Extra B](../b-intrusive-list/) · [Final project](../../../assignments/week04-final-project/) |
 
 Read these notes, after [Extra B](../b-intrusive-list/), if you take the final project's intrusive-list extension.
 
@@ -15,25 +15,25 @@ The [Extra C deck](extra-c-slides.pptx) teaches `offsetof()`, `container_of()`,
 and list macros. Start with Extra B's embedded-member model; the following
 PDF sections support the derivation rather than replace it:
 
-- [Pointers Revisited](../../session1-struct/%5BSlide%5D%2001.%20Pointers%20Revisited.pdf#page=13),
+- [Pointers Revisited](../../week01-struct/%5BSlide%5D%2001.%20Pointers%20Revisited.pdf#page=13),
   pp. 13-19: `sizeof`, scaled pointer arithmetic, and generic object pointers.
   Use `size_t` and `%zu`; byte arithmetic needs a character pointer, and
   standard C11 does not support arithmetic on `void *`.
-- [Low Level Operations](../../session2-operators/%5BSlide%5D%2006.%20Low%20Level%20Operations.pdf#page=20),
+- [Low Level Operations](../../week02-operators/%5BSlide%5D%2006.%20Low%20Level%20Operations.pdf#page=20),
   pp. 20-24: implementation-dependent bit-field storage and byte ordering.
   Contrast these with offsets of ordinary members: bit-fields have no address
   and cannot be used with `offsetof()`.
-  [Strings](../../session2-operators/%5BSlide%5D%2003.%20Strings.pdf#page=68),
+  [Strings](../../week02-operators/%5BSlide%5D%2003.%20Strings.pdf#page=68),
   pp. 68-72, supplies byte-counted memory operations after the byte-pointer review.
-- [Writing Large Programs](../../session4-file-io-project/%5BSlide%5D%2007.%20Writing%20Large%20Programs.pdf#page=3),
+- [Writing Large Programs](../../week04-file-io-project/%5BSlide%5D%2007.%20Writing%20Large%20Programs.pdf#page=3),
   pp. 3-10 and 15-18: preprocessing, parameter substitution, repeated
   evaluation, parentheses, and conditional compilation. Page 15 directly
   supports the macro-parenthesization discussion; pp. 11-13 (`#` / `##`) and
   19-20 (predefined macros / `#error`) are optional extensions.
-- Optional: [Structures, Unions and Enums](../../session1-struct/%5BSlide%5D%2005.%20Structures%2C%20Unions%20and%20Enums.pdf#page=32),
-  pp. 32-47, with the [union/enum examples](../../session1-struct/examples/structures-unions-enums/README.md),
-  for shared storage and tagged variants; [Pointers Revisited](../../session1-struct/%5BSlide%5D%2001.%20Pointers%20Revisited.pdf#page=41),
-  pp. 41-50, with the [callback/declaration examples](../../session1-struct/examples/pointers-revisited/README.md),
+- Optional: [Structures, Unions and Enums](../../week01-struct/%5BSlide%5D%2005.%20Structures%2C%20Unions%20and%20Enums.pdf#page=32),
+  pp. 32-47, with the [union/enum examples](../../week01-struct/examples/structures-unions-enums/README.md),
+  for shared storage and tagged variants; [Pointers Revisited](../../week01-struct/%5BSlide%5D%2001.%20Pointers%20Revisited.pdf#page=41),
+  pp. 41-50, with the [callback/declaration examples](../../week01-struct/examples/pointers-revisited/README.md),
   for function pointers and complex types. These are enrichment, not prerequisites
   for the list assignment.
 
@@ -247,7 +247,7 @@ A function cannot take a **type** (`struct student`) or a **member name** (`list
 
 ### 2.4 Makefile corner: see the expansion with `gcc -E`
 
-The Extra C examples Makefile has a rule that stops after preprocessing (Session 1, §1.2):
+The Extra C examples Makefile has a rule that stops after preprocessing (Week 01, §1.2):
 
 ```make
 container_of_demo.i: container_of_demo.c
@@ -267,7 +267,7 @@ The `.i` file is about 660 lines, because `#include <stdio.h>` was pasted in too
 
 ### 2.5 Why every parenthesis matters
 
-`container_of()` follows both macro rules from Session 2, §2.6. Each one prevents a real bug here:
+`container_of()` follows both macro rules from Week 02, §2.6. Each one prevents a real bug here:
 
 - **Around `ptr`:** with `(char *)ptr`, the call `container_of(lp + 1, struct book, list)` would expand to `(char *)lp + 1`, which is 1 *byte* past `lp` instead of 1 `list_head` (16 bytes) past it. `pointer_arith.c` printed both addresses, 15 bytes apart.
 - **Around the whole expansion:** without it, `container_of(pos, struct book, list)->id` would apply the cast to `(…)->id`, because `->` binds tighter than a cast. That does not compile.
@@ -327,7 +327,7 @@ at exit  :
 ```
 
 - Use `list_for_each()` when you only **read**.
-- Use `list_for_each_safe()` when the loop body may **unlink or free** `pos`. The plain version would read `pos->next` after `free(pos)`. This is the Session 3 and Extra A "save next first" rule, packaged as a macro.
+- Use `list_for_each_safe()` when the loop body may **unlink or free** `pos`. The plain version would read `pos->next` after `free(pos)`. This is the Week 03 and Extra A "save next first" rule, packaged as a macro.
 
 > `include/linux/list.h` also has `list_for_each_entry(pos, head, member)`, which iterates directly over containing objects. It needs `typeof`, a GNU extension (standardized only in C23), so we do not use it in C11 code.
 
@@ -406,4 +406,4 @@ Do this only after your final project works with its `struct node` list.
 
 ### Next
 
-You now have the same list design that the Linux kernel uses. Take it to the [final project](../../../assignments/session4-final-project/README.md#12-optional-extensions-bonus) as its intrusive-list extension.
+You now have the same list design that the Linux kernel uses. Take it to the [final project](../../../assignments/week04-final-project/README.md#12-optional-extensions-bonus) as its intrusive-list extension.
