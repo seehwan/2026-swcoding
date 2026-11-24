@@ -7,7 +7,7 @@
 | **Demo code** | [`examples/`](examples/) · [Teaching guide](examples/README.md) |
 | **Previous / Next** | [Week 02](../week02-operators/) · [Part 2 — Doubly Linked List](part2-doubly-linked-list.md) |
 
-These notes have two halves. §1 and §2 look at where variables live and move objects onto the heap with `malloc()` and `free()`, under a clear ownership rule. §3 and §4 use those heap objects to build the course's first data structure, a singly linked list: nodes, traversal, insertion, freeing the whole list, and the design of delete.
+These notes go in four steps. §1 sorts the variables you already know into global and local, and shows what neither can do. §2 builds a singly linked list by hand from local variables: nodes, links, and traversal. §3 explains why locals are not enough and moves objects onto the heap with `malloc()` and `free()`, under a clear ownership rule. §4 puts the two together: insertion, freeing the whole list, and the design of delete.
 
 ## Reference slide reading
 
@@ -17,7 +17,7 @@ building the singly linked list.
 
 | Order | Reference pages | Connection to this lecture |
 |---|---|---|
-| 1 | [Dynamic Memory Allocation](%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf), pp. 2-5 | Motivation, memory regions, and storage lifetime; pair with [`memory_map.c`](examples/memory_map.c). |
+| 1 | [Dynamic Memory Allocation](%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf), pp. 2-5 | Motivation and storage lifetime (§1 and §3.1–§3.3). The memory-region picture is background reading; [`memory_map.c`](examples/memory_map.c) is an optional demo. |
 | 2 | [Dynamic Memory Allocation](%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf), pp. 6-24 | Allocation APIs, the visual allocation/free trace (pp. 9-19), dynamic arrays, `calloc()`, `realloc()`, and failure checks; pair with [`malloc_basics.c`](examples/malloc_basics.c). |
 | 3 | [Dynamic Memory Allocation](%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf), pp. 25-27 | Lost ownership, leaks, and dangling pointers; connect to the create/destroy pair in [`book_factory.c`](examples/book_factory.c), then freeing list nodes. |
 | 4 | [Structures, Unions and Enums](../week01-struct/%5BSlide%5D%2005.%20Structures%2C%20Unions%20and%20Enums.pdf), p. 23 | A heap-allocated struct can own a separate heap string. Use [`dynamic_struct_copy.c`](../week01-struct/examples/structures-unions-enums/dynamic_struct_copy.c) to compare borrowed shallow copies with an owning deep clone. |
@@ -44,7 +44,7 @@ or allocator placement.
 
 By the end of this session you can:
 
-1. Name the memory regions of a running C program (code, data/bss, heap, stack) and say what lives in each.
+1. Tell global and local variables apart: where each is visible, how long each lives, and what neither can do.
 2. Explain the *lifetime* of a local variable and why returning its address is a bug.
 3. Allocate a struct with `malloc()`, check for failure, and release it with `free()`.
 4. Recognize the four classic heap bugs: leak, use-after-free, double free, missing `NULL` check.
@@ -67,255 +67,67 @@ Warm-up questions:
 3. What do `(double)(7 / 2)` and `(double)7 / 2` evaluate to?
 4. Rewrite `if (p->id == id && p != NULL)` so that it cannot crash.
 
-Today's question: **So far every struct has been a local variable. What happens to it when the function returns?**
+Today's questions: **So far every struct has been a local variable. How do we keep track of an unknown number of them, and what happens to a local when its function returns?**
 
 ---
 
-## 1. Where Do Variables Live?
+## 1. Global and Local Variables
 
-### 1.1 The memory layout of a process
+### 1.1 Two kinds of variables
 
-```text
- high addresses
- +--------------------------+
- |          stack           |   local variables, function parameters
- |            |             |   grows down with each function call
- |            v             |
- |                          |
- |            ^             |
- |            |             |
- |           heap           |   malloc()/free(): you decide the lifetime
- +--------------------------+
- |  bss   (zeroed globals)  |   int global_zero;
- |  data  (initialized)     |   int global_counter = 1;  static int x = 2;
- +--------------------------+
- |  text  (machine code)    |   your functions
- +--------------------------+
- low addresses
-```
-
-The exact addresses differ from machine to machine and from run to run. What is the same everywhere is that different regions have different **lifetimes**.
-
-### 1.2 Three kinds of storage duration
-
-| Storage | Example | Created | Destroyed | Who manages it |
-|---|---|---|---|---|
-| **Automatic** (stack) | `int x;` inside a function | when the block is entered | when the block is left | the compiler |
-| **Static** (data/bss) | global variables, `static int x;` | before `main()` starts | when the program ends | the compiler |
-| **Allocated** (heap) | `malloc(...)` | when you call `malloc()` | when you call `free()` | **you** |
-
-**Live demo** — [`examples/memory_map.c`](examples/memory_map.c):
-
-```bash
-cd lectures/week03-linked-list/examples
-make
-./memory_map
-```
-
-```text
-data  : &global_counter = 0x102b34000
-bss   : &global_zero    = 0x102b34008
-data  : &static_local   = 0x102b34004
-heap  : heap            = 0x103331520
-stack : &local          = 0x16d2d2568
-stack : &heap           = 0x16d2d2560   (the pointer itself is on the stack)
-each call gets its own stack frame:
-  depth 1: &local = 0x16d2d2538
-  depth 2: &local = 0x16d2d2508
-  depth 3: &local = 0x16d2d24d8
-```
-
-Things to point out:
-
-- The `heap` **pointer variable** lives on the stack. The `int` **it points to** lives on the heap.
-- Each recursive call has its own `local`, at a lower address each time. The stack grows down.
-
-### 1.3 Stack frames and lifetime
-
-```text
- main() calls make_book_bad()            make_book_bad() returns
-
- +---------------------+                 +---------------------+
- | make_book_bad frame |                 |  (dead memory —     |
- |   struct book b     | ◄── &b          |   will be reused by |
- +---------------------+                 |   the next call)    |
- | main frame          |                 +---------------------+
- |   struct book *p    |                 | main frame          |
- +---------------------+                 |   p ──────────────► ??? (dangling)
-                                         +---------------------+
-```
-
-When a function returns, its frame is popped. The memory is not erased, but it **no longer belongs to you**. The next function call reuses it.
-
-### 1.4 The classic bug: returning the address of a local
-
-[`examples/dangling_local.c`](examples/dangling_local.c):
+Every variable you have written so far is one of two kinds. The difference is **where** you declare it.
 
 ```c
-static struct book *make_book_bad(void)
+#include <stdio.h>
+
+int total = 0;                /* global: declared outside every function */
+
+static void add(int n)        /* n and doubled are local to add()        */
 {
-    struct book b = { .id = 1, .title = "Dangling", .year = 2000 };
+    int doubled = n * 2;      /* created each time add() is called...    */
 
-    return &b;          /* b dies when this function returns */
+    total += doubled;
+}                             /* ...and gone when add() returns          */
+
+int main(void)
+{
+    add(1);
+    add(2);
+    printf("%d\n", total);    /* 6: total kept its value between calls   */
+    return 0;
 }
 ```
 
-The compiler catches this one, if you have warnings enabled:
-
-```text
-clang: warning: address of stack memory associated with local variable 'b' returned [-Wreturn-stack-address]
-gcc:   warning: function returns address of local variable [-Wreturn-local-addr]
-```
-
-Using `p->id` afterwards is **undefined behavior**. It may print `1`, print garbage, or crash, and it can change from one run to the next.
-
-### 1.5 Why we need the heap
-
-The stack cannot help in two situations:
-
-1. **An object must outlive the function that creates it.** A `book_create()` function has to return something that still exists after it returns.
-2. **We do not know how many objects we need** until the program runs. A user may add 3 students or 3,000.
-
-Both are exactly what a linked list needs (§3, later today). The heap gives us memory whose lifetime **we** control.
-
----
-
-## 2. `malloc()`, `free()`, and Ownership
-
-### 2.1 The API
-
-```c
-#include <stdlib.h>
-
-void *malloc(size_t size);               /* size bytes, NOT initialized, or NULL */
-void *calloc(size_t count, size_t size); /* count*size bytes, all ZERO, or NULL  */
-void  free(void *ptr);                   /* release; free(NULL) does nothing     */
-```
-
-- `malloc()` returns `void *`, a "pointer to anything". In C it converts to any object pointer type without a cast.
-- The memory from `malloc()` contains **garbage** until you write to it.
-- `malloc()` can **fail** and return `NULL`.
-
-### 2.2 The allocation idiom
-
-```c
-struct book *b = malloc(sizeof(*b));     /* preferred */
-struct book *b = malloc(sizeof(struct book));   /* also correct */
-```
-
-`sizeof(*b)` means "the size of whatever `b` points to". If you later change the type of `b`, the size stays correct. Note that `sizeof` does **not** dereference `b`, so this is safe even though `b` is not initialized yet.
-
-A common mistake:
-
-```c
-struct book *b = malloc(sizeof(b));      /* WRONG: size of a POINTER (8 bytes), not of a book */
-```
-
-### 2.3 Always check for `NULL`
-
-```c
-struct book *b = malloc(sizeof(*b));
-
-if (b == NULL) {
-    fprintf(stderr, "Error: out of memory\n");
-    return EXIT_FAILURE;
-}
-b->id = 1;    /* safe: b is not NULL */
-```
-
-Allocation failure is rare on a laptop. It is not rare on embedded systems or in the kernel, and dereferencing `NULL` crashes your program. Checking is a habit, not an optimization.
-
-### 2.4 What it looks like in memory
-
-```text
-        stack                                heap
- +---------------------+          +-----------------------------------+
- | b = 0x103331520     | ───────► | id | title[32]           | year   |
- +---------------------+          +-----------------------------------+
-   (dies at end of main)            (lives until free(b))
-```
-
-**Live demo** — [`examples/malloc_basics.c`](examples/malloc_basics.c): one `int`, one `struct book`, and a zeroed array from `calloc()`, each followed by `free()`.
-
-### 2.5 After `free()`
-
-```c
-free(b);
-/* b still holds the old address, but the memory is no longer yours */
-b = NULL;     /* good habit: a NULL pointer fails loudly, a dangling one fails randomly */
-```
-
-`free()` does **not** change your pointer variable. It cannot, because it received a copy of the address (pass by value, Week 01).
-
-### 2.6 The four classic heap bugs
-
-| Bug | Code | What happens |
+| | Global variable | Local variable |
 |---|---|---|
-| **Memory leak** | `b = malloc(...); b = malloc(...);` | The first block can never be freed. Memory use grows until the program ends. |
-| **Use after free** | `free(b); printf("%d", b->id);` | Undefined behavior: may "work", print garbage, or crash later somewhere else. |
-| **Double free** | `free(b); free(b);` | Undefined behavior: often corrupts the allocator and aborts. |
-| **Missing `NULL` check** | `b = malloc(...); b->id = 1;` | Crash when allocation fails. |
+| Declared | outside every function | inside a function (parameters too) |
+| Visible | in every function below it in the file | only inside that function |
+| Created | before `main()` starts | each time the function is called |
+| Destroyed | when the program ends | when the function returns |
+| How many | fixed when you write the code | fixed when you write the code |
 
-Two more you will meet soon:
+- A local's **lifetime** is one call. The second call to `add()` gets a new `doubled`, and nothing is left of the first one.
+- A global lives for the whole run, but every function can change it, which makes bugs hard to find. This course uses globals rarely.
+- Week 01 already relied on this: a parameter is a local **copy**, which is why `set_year_by_value()` could not change the caller's book.
 
-- **Buffer overflow:** `strcpy(b->title, very_long_string);` writes past the end of `title`. Use `snprintf(b->title, sizeof(b->title), "%s", s);`.
-- **Reading uninitialized memory:** `malloc()` returns garbage, so assign every member (or use `calloc()`).
+### 1.2 What neither kind can do
 
-### 2.7 Ownership: who calls `free()`?
+Look at the last row of the table. One declaration gives one variable, so the number of variables is decided when you write the code. A student manager does not know that number: a user may add 3 students or 3,000.
 
-Every heap object needs exactly **one owner**, the piece of code responsible for freeing it **exactly once**.
+Two things are missing:
 
-```c
-/* Returns a new heap-allocated book, or NULL if out of memory.
- * The caller owns the result and must call book_destroy() on it. */
-static struct book *book_create(int id, const char *title, int year)
-{
-    struct book *b = malloc(sizeof(*b));
+1. A way to **connect** objects, so that a program can hold however many there are without a fixed-size array. That is the linked list (§2).
+2. A way to **create** an object while the program runs, and to keep it after the function that created it returns. That is `malloc()` (§3).
 
-    if (b == NULL)
-        return NULL;
-
-    b->id = id;
-    snprintf(b->title, sizeof(b->title), "%s", title);
-    b->year = year;
-    return b;
-}
-
-static void book_destroy(struct book *b)
-{
-    free(b);
-}
-```
-
-- The **comment** states the ownership contract. Write one for every function that allocates.
-- `create` and `destroy` come in pairs. When you read `book_create()`, look for the matching `book_destroy()`.
-- Returning a pointer to heap memory is fine, unlike returning a pointer to a local, because the heap object lives on after the function returns.
-
-> **Preview of the final project.** The list owns every node. `student_add()` allocates a node and links it, and only `student_delete()` (*find → unlink → free*) and `student_free_all()` free one. Today's ownership rule is the reason.
-
-### 2.8 Checking for leaks without extra tools
-
-Count live objects: increment in `create`, decrement in `destroy`, and print the count at exit.
-
-**Live demo** — [`examples/book_factory.c`](examples/book_factory.c):
-
-```text
-[1] The C Programming Language (1978)
-[2] A title that is far too long to (2024)
-live books: 2
-live books at exit: 0
-```
-
-- `live books at exit: 0` means every `create` had a matching `destroy`.
-- Book 2's title was **truncated safely** to 31 characters by `snprintf()`. With `strcpy()` it would have overflowed the array.
+We take them in that order. In §2 every node is still an ordinary local variable, so you can concentrate on the links.
 
 ---
 
-## 3. Nodes, Links, and Traversal
+## 2. Nodes, Links, and Traversal
 
-We can now create as many objects as we like at run time. But how do we **keep track** of an unknown number of them without an array? The answer: every object holds a pointer to the next one.
+How do we **keep track** of an unknown number of objects without an array? The answer: every object holds a pointer to the next one. In this section the nodes are ordinary local variables. §3 shows how to create them at run time.
 
-### 3.1 Arrays vs. linked lists
+### 2.1 Arrays vs. linked lists
 
 ```text
 Array: one contiguous block
@@ -323,7 +135,7 @@ Array: one contiguous block
 |  b0  |  b1  |  b2  |  b3  |  b4  |
 +------+------+------+------+------+
 
-Linked list: nodes anywhere on the heap, each one knows the next
+Linked list: nodes anywhere in memory, each one knows the next
 head ──► +----+---+     +----+---+     +----+------+
          | b0 | ●─┼───► | b1 | ●─┼───► | b2 | NULL |
          +----+---+     +----+---+     +----+------+
@@ -334,12 +146,12 @@ head ──► +----+---+     +----+---+     +----+------+
 | Access the *i*-th element | O(1), `a[i]` | O(n), walk from `head` |
 | Insert / delete at the front | O(n), shift everything | **O(1)** |
 | Insert / delete in the middle (position known) | O(n), shift | **O(1)** once you have the previous node |
-| Size | Fixed, or `realloc()` + copy | Grows one node at a time |
+| Size | Fixed when you declare it | Grows one node at a time |
 | Extra memory | None | One pointer per node |
 
 A list trades fast indexing for cheap insertion and deletion and unlimited growth. That is the right trade when objects are added and removed often but rarely looked up by position.
 
-### 3.2 The node: a self-referential struct
+### 2.2 The node: a self-referential struct
 
 ```c
 struct book {
@@ -358,9 +170,9 @@ struct node {
 - The Assignment 03B starter uses the same shape with `struct student data;`.
 - A pointer called **`head`** points to the first node, and `head == NULL` means the list is empty. The last node (the **tail**) has `next == NULL`.
 
-### 3.3 Building a list by hand
+### 2.3 Building a list by hand
 
-**Live demo** — [`examples/sll_manual.c`](examples/sll_manual.c). There is no `malloc()` yet, so we can focus on the links:
+**Live demo** — [`examples/sll_manual.c`](examples/sll_manual.c). The three nodes are locals of `main()`, so we can focus on the links:
 
 ```c
 struct node c = { .data = { 3, "Linux Device Drivers", 2005 },           .next = NULL };
@@ -377,7 +189,7 @@ node at 0x16f75e528: [3] Linux Device Drivers             next = 0x0
 
 Ask the class to draw this output as boxes and arrows, using the printed addresses.
 
-### 3.4 The traversal pattern
+### 2.4 The traversal pattern
 
 ```c
 struct node *cur;
@@ -413,9 +225,209 @@ static int count_list(const struct node *head)
 
 Here moving `head` is fine, because the parameter is a **copy** of the caller's pointer (Week 01, pass by value).
 
+### 2.5 Where the hand-built list stops
+
+The three nodes of `sll_manual.c` are locals of `main()`. That is enough to learn links and traversal, but it cannot become a real program:
+
+- The list has exactly three nodes, because `main()` declares exactly three variables. A menu command "add a student" has nothing it can declare at run time.
+- The obvious fix is a function that makes a node and returns it. With a local variable that does not work, and §3 starts with that attempt.
+
+---
+
+## 3. `malloc()`, `free()`, and Ownership
+
+### 3.1 Locals die when their function returns
+
+The parameters and locals of one call are kept together in a **stack frame**. The area of memory that holds the frames is called the **stack**: each call adds a frame on top, and each return removes it.
+
+```text
+ main() calls make_book_bad()            make_book_bad() returns
+
+ +---------------------+                 +---------------------+
+ | make_book_bad frame |                 |  (dead memory —     |
+ |   struct book b     | ◄── &b          |   will be reused by |
+ +---------------------+                 |   the next call)    |
+ | main frame          |                 +---------------------+
+ |   struct book *p    |                 | main frame          |
+ +---------------------+                 |   p ──────────────► ??? (dangling)
+                                         +---------------------+
+```
+
+When a function returns, its frame is popped. The memory is not erased, but it **no longer belongs to you**. The next function call reuses it.
+
+### 3.2 The classic bug: returning the address of a local
+
+[`examples/dangling_local.c`](examples/dangling_local.c):
+
+```c
+static struct book *make_book_bad(void)
+{
+    struct book b = { .id = 1, .title = "Dangling", .year = 2000 };
+
+    return &b;          /* b dies when this function returns */
+}
+```
+
+The compiler catches this one, if you have warnings enabled:
+
+```text
+clang: warning: address of stack memory associated with local variable 'b' returned [-Wreturn-stack-address]
+gcc:   warning: function returns address of local variable [-Wreturn-local-addr]
+```
+
+Using `p->id` afterwards is **undefined behavior**. It may print `1`, print garbage, or crash, and it can change from one run to the next.
+
+### 3.3 A third kind of storage: the heap
+
+A local cannot help in two situations:
+
+1. **An object must outlive the function that creates it.** A `book_create()` function has to return something that still exists after it returns.
+2. **We do not know how many objects we need** until the program runs.
+
+A global does not help either: it lives long enough, but there is still only one of it. Both needs are exactly what the list of §2 has.
+
+C has a third kind of storage, called the **heap**. You create an object there with `malloc()` and destroy it with `free()`, so its lifetime is yours to decide.
+
+| Kind | Example | Created | Destroyed | Who manages it |
+|---|---|---|---|---|
+| Local (on the stack) | `int x;` inside a function | when the function is called | when the function returns | the compiler |
+| Global | `int total;` outside functions | before `main()` starts | when the program ends | the compiler |
+| **Allocated (on the heap)** | `malloc(...)` | when you call `malloc()` | when you call `free()` | **you** |
+
+> **Optional.** [`examples/memory_map.c`](examples/memory_map.c) prints one address of each kind, and the address of a local at three call depths. Run it if you want to see that the three kinds really sit in different parts of memory. The names of those parts beyond *stack* and *heap* are not needed in this course.
+
+### 3.4 The API
+
+```c
+#include <stdlib.h>
+
+void *malloc(size_t size);               /* size bytes, NOT initialized, or NULL */
+void *calloc(size_t count, size_t size); /* count*size bytes, all ZERO, or NULL  */
+void  free(void *ptr);                   /* release; free(NULL) does nothing     */
+```
+
+- `malloc()` returns `void *`, a "pointer to anything". In C it converts to any object pointer type without a cast.
+- The memory from `malloc()` contains **garbage** until you write to it.
+- `malloc()` can **fail** and return `NULL`.
+
+### 3.5 The allocation idiom
+
+```c
+struct book *b = malloc(sizeof(*b));     /* preferred */
+struct book *b = malloc(sizeof(struct book));   /* also correct */
+```
+
+`sizeof(*b)` means "the size of whatever `b` points to". If you later change the type of `b`, the size stays correct. Note that `sizeof` does **not** dereference `b`, so this is safe even though `b` is not initialized yet.
+
+A common mistake:
+
+```c
+struct book *b = malloc(sizeof(b));      /* WRONG: size of a POINTER (8 bytes), not of a book */
+```
+
+### 3.6 Always check for `NULL`
+
+```c
+struct book *b = malloc(sizeof(*b));
+
+if (b == NULL) {
+    fprintf(stderr, "Error: out of memory\n");
+    return EXIT_FAILURE;
+}
+b->id = 1;    /* safe: b is not NULL */
+```
+
+Allocation failure is rare on a laptop. It is not rare on embedded systems or in the kernel, and dereferencing `NULL` crashes your program. Checking is a habit, not an optimization.
+
+### 3.7 What it looks like in memory
+
+```text
+        stack                                heap
+ +---------------------+          +-----------------------------------+
+ | b = 0x103331520     | ───────► | id | title[32]           | year   |
+ +---------------------+          +-----------------------------------+
+   (dies at end of main)            (lives until free(b))
+```
+
+**Live demo** — [`examples/malloc_basics.c`](examples/malloc_basics.c): one `int`, one `struct book`, and a zeroed array from `calloc()`, each followed by `free()`.
+
+### 3.8 After `free()`
+
+```c
+free(b);
+/* b still holds the old address, but the memory is no longer yours */
+b = NULL;     /* good habit: a NULL pointer fails loudly, a dangling one fails randomly */
+```
+
+`free()` does **not** change your pointer variable. It cannot, because it received a copy of the address (pass by value, Week 01).
+
+### 3.9 The four classic heap bugs
+
+| Bug | Code | What happens |
+|---|---|---|
+| **Memory leak** | `b = malloc(...); b = malloc(...);` | The first block can never be freed. Memory use grows until the program ends. |
+| **Use after free** | `free(b); printf("%d", b->id);` | Undefined behavior: may "work", print garbage, or crash later somewhere else. |
+| **Double free** | `free(b); free(b);` | Undefined behavior: often corrupts the allocator and aborts. |
+| **Missing `NULL` check** | `b = malloc(...); b->id = 1;` | Crash when allocation fails. |
+
+Two more you will meet soon:
+
+- **Buffer overflow:** `strcpy(b->title, very_long_string);` writes past the end of `title`. Use `snprintf(b->title, sizeof(b->title), "%s", s);`.
+- **Reading uninitialized memory:** `malloc()` returns garbage, so assign every member (or use `calloc()`).
+
+### 3.10 Ownership: who calls `free()`?
+
+Every heap object needs exactly **one owner**, the piece of code responsible for freeing it **exactly once**.
+
+```c
+/* Returns a new heap-allocated book, or NULL if out of memory.
+ * The caller owns the result and must call book_destroy() on it. */
+static struct book *book_create(int id, const char *title, int year)
+{
+    struct book *b = malloc(sizeof(*b));
+
+    if (b == NULL)
+        return NULL;
+
+    b->id = id;
+    snprintf(b->title, sizeof(b->title), "%s", title);
+    b->year = year;
+    return b;
+}
+
+static void book_destroy(struct book *b)
+{
+    free(b);
+}
+```
+
+- The **comment** states the ownership contract. Write one for every function that allocates.
+- `create` and `destroy` come in pairs. When you read `book_create()`, look for the matching `book_destroy()`.
+- Returning a pointer to heap memory is fine, unlike returning a pointer to a local, because the heap object lives on after the function returns.
+
+> **Preview of the final project.** The list owns every node. `student_add()` allocates a node and links it, and only `student_delete()` (*find → unlink → free*) and `student_free_all()` free one. Today's ownership rule is the reason.
+
+### 3.11 Checking for leaks without extra tools
+
+Count live objects: increment in `create`, decrement in `destroy`, and print the count at exit.
+
+**Live demo** — [`examples/book_factory.c`](examples/book_factory.c):
+
+```text
+[1] The C Programming Language (1978)
+[2] A title that is far too long to (2024)
+live books: 2
+live books at exit: 0
+```
+
+- `live books at exit: 0` means every `create` had a matching `destroy`.
+- Book 2's title was **truncated safely** to 31 characters by `snprintf()`. With `strcpy()` it would have overflowed the array.
+
 ---
 
 ## 4. Insert, Free, and the Design of Delete
+
+Now put the two halves together: the nodes and links of §2, created on the heap as in §3.
 
 ### 4.1 Creating a node
 
@@ -655,7 +667,7 @@ Task: [assignments/week03-linked-list/README.md](../../assignments/week03-linked
 
 ### 5.2 Lab B — Bug hunt
 
-The program below compiles, but it contains **six** memory bugs. Your compiler may even warn about one or two of them. Find each one, name it (use §2.2 and the table in §2.6), and fix it. Do it on paper first, then type it in and test.
+The program below compiles, but it contains **six** memory bugs. Your compiler may even warn about one or two of them. Find each one, name it (use §3.5 and the table in §3.9), and fix it. Do it on paper first, then type it in and test.
 
 ```c
 #include <stdio.h>
@@ -744,7 +756,8 @@ Singly linked list (after Lab C):
 
 ### Key takeaways
 
-- Locals live on the **stack** and die when their function returns. Never return their address.
+- A global lives for the whole program, and a local dies when its function returns. Both are fixed in number when you write the code.
+- Locals live on the **stack**. Never return the address of one.
 - Heap memory from `malloc()` lives until **you** call `free()`.
 - `malloc(sizeof(*p))`, check for `NULL`, initialize every member, and `free()` exactly once.
 - Every heap object has one **owner**. Write the ownership contract in a comment.

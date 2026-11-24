@@ -11,7 +11,7 @@ Every struct so far has been a local variable. This session creates objects at r
 
 | Part | Notes | Slides | Covers | Practice |
 |---|---|---|---|---|
-| 1 | [Dynamic Memory and Singly Linked List](part1-dynamic-memory-singly-list.md) | [week03-part1-slides.pptx](week03-part1-slides.pptx) | Stack and heap, `malloc()` / `free()`, ownership, nodes, traversal, insert, delete | Labs 03A and 03B |
+| 1 | [Dynamic Memory and Singly Linked List](part1-dynamic-memory-singly-list.md) | [week03-part1-slides.pptx](week03-part1-slides.pptx) | Global and local variables, nodes and traversal, `malloc()` / `free()`, ownership, insert, delete | Labs 03A and 03B |
 | 2 | [Doubly Linked List](part2-doubly-linked-list.md) | [week03-part2-slides.pptx](week03-part2-slides.pptx) | `prev`, `head` and `tail`, invariants, the four cases of delete, debugging links | Assignment 03C |
 
 Reference PDF: [Dynamic Memory Allocation](%5BSlide%5D%2002.%20Dynamic%20Memory%20Allocation.pdf). Each part's notes list the pages to read.

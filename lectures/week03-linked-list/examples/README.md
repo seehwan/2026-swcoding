@@ -22,14 +22,15 @@ and [Strings](../../week02-operators/%5BSlide%5D%2003.%20Strings.pdf).
 
 | Order | Demo | PDF pages and purpose |
 |---|---|---|
-| 1 | [memory_map.c](memory_map.c) | Dynamic Memory pp. 4-5: separate the pointer object's storage from the allocation it refers to. Addresses illustrate a particular run. |
+| 1 | [sll_manual.c](sll_manual.c) | Three nodes that are local variables of `main()`, linked by hand and traversed with a cursor. No allocation yet, so the links are the only new idea. |
 | 2 | [malloc_basics.c](malloc_basics.c) | Dynamic Memory pp. 6-8, 20-24: allocate, check, initialize, and release integers, structures, and a zeroed array. |
 | 3 | [realloc_catalog.c](realloc_catalog.c) | Dynamic Memory pp. 23-27: grow and shrink an owned year array; initialize new elements; retain ownership after failure; reject byte-size overflow. |
 | 4 | [dynamic_matrix.c](dynamic_matrix.c) | Dynamic Memory pp. 28-29 and Pointers pp. 28-39: separately allocated rows versus one actual flat allocation, including cleanup after a partial allocation failure. |
 | 5 | [owned_title.c](owned_title.c) | Structures p. 23; Strings pp. 49-60, 68-72, 74-81: size strings including their terminator, replace only after successful allocation, and consume borrowed substrings before freeing old storage. |
 | 6 | [book_factory.c](book_factory.c) | Dynamic Memory pp. 24-27: state the owner through a create/destroy pair and verify the live-book count reaches zero. |
-| 7 | [sll_manual.c](sll_manual.c), [sll_book.c](sll_book.c) | Course extension using Structures pp. 21-27 and Pointers pp. 25-26: connect objects, traverse with a cursor, insert through a head pointer, and save the next link before freeing. The PDFs supply the C mechanisms; the list algorithms are taught in the Part 1 notes. |
+| 7 | [sll_book.c](sll_book.c) | Course extension using Structures pp. 21-27 and Pointers pp. 25-26: connect objects, traverse with a cursor, insert through a head pointer, and save the next link before freeing. The PDFs supply the C mechanisms; the list algorithms are taught in the Part 1 notes. |
 | 8 | [dll_book.c](dll_book.c) | Part 2's doubly linked list, built on Pointers pp. 25-26 and Structures pp. 21-27. Inspect forward links, backward links, and the always-on checker. Backward print and delete are left for the lab. |
+| optional | [memory_map.c](memory_map.c) | Dynamic Memory pp. 4-5: separate the pointer object's storage from the allocation it refers to. Addresses illustrate a particular run. Not needed for the lecture: the notes only use the words *stack* and *heap*. |
 
 The existing [matrix argument demo](../../week01-struct/examples/pointers-revisited/matrix_arguments.c)
 establishes why a true 2D array is not an `int **`. The existing
