@@ -482,4 +482,11 @@ From [docs/submission.md](../../docs/submission.md) and the [final checklist](..
 
 </details>
 
+### Next
+
+This was the last session. **Next week, Dec 14: the exam, and the final project is due.**
+
+- The exam covers Weeks 01–04. The optional Extras A–D are not on it.
+- Hand in the project as described in the [specification](../../assignments/week04-final-project/README.md) and the [submission guide](../../docs/submission.md).
+
 Good luck with the project.
